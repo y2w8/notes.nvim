@@ -6,6 +6,47 @@ local errors = require("notes.errors")
 local templates = require("notes.templates")
 local M = {}
 
+function M.create_workspace_note(timestamp, config)
+	-- Construct the directory structure and filename
+  local note_dir = utils.expand_path(vim.fn.getcwd())
+	local note_name = vim.fn.fnamemodify(vim.fn.getcwd(), ":t")
+	local full_path = utils.join_path(note_dir, note_name .. ".md")
+
+	-- Ensure directory exists
+	utils.ensure_dir(note_dir)
+
+	-- Create the daily note if it doesn't exist
+	if vim.fn.filereadable(full_path) == 0 then
+		-- Create template context
+		local context = templates.create_context(timestamp, "workspace", note_name)
+
+		-- Generate note content using template system
+		local template_config = config.templates.workspace
+		local tags = (config.templates.workspace and config.templates.workspace.tags) or "[#workspace]"
+
+		-- If template only has tags (no actual template content), use nil to trigger defaults
+		if
+			template_config
+			and not template_config.sections
+			and not template_config.header
+			and not template_config.footer
+			and not template_config.file
+			and not template_config[1]
+			and type(template_config) ~= "function"
+		then
+			template_config = nil
+		end
+
+		local content = templates.generate_note_content(template_config, context, tags, config)
+
+		vim.fn.writefile(content, full_path)
+	end
+
+	-- Change to PKM directory and open the file
+	-- vim.cmd("cd " .. config.pkm_dir)
+	vim.cmd("edit " .. vim.fn.fnameescape(full_path))
+end
+
 -- Core function to create daily note for a given timestamp
 function M.create_daily_note_for_timestamp(timestamp, config)
 	local main_note_dir = utils.join_path(config.pkm_dir, "Daily")
@@ -72,6 +113,11 @@ function M.dynamic_daily_note(input, config)
 	errors.daily_note_opened(date_str, description)
 
 	M.create_daily_note_for_timestamp(timestamp, config)
+end
+
+-- Workspace note
+function M.workspace_note(config)
+	M.create_workspace_note(os.time(), config)
 end
 
 -- Today's daily note

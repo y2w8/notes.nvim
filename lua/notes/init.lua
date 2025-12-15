@@ -71,6 +71,10 @@ M.daily_note = function()
 	return daily.daily_note(ensure_setup())
 end
 
+M.workspace_note = function()
+	return daily.workspace_note(ensure_setup())
+end
+
 M.tomorrow_note = function()
 	return daily.tomorrow_note(ensure_setup())
 end

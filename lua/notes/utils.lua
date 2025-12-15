@@ -40,7 +40,7 @@ end
 
 -- Helper function to get current timestamp in ISO format
 function M.get_timestamp()
-	return os.date("%Y-%m-%dT%H:%M:%S")
+	return os.date("%A, %d %b %Y %I:%M %p")
 end
 
 -- Helper function to check if file is in PKM directory

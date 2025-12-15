@@ -65,11 +65,19 @@ end
 
 -- Default templates for zero-config users
 M.defaults = {
+	workspace = {
+		sections = {
+			{ title = "# Goal", content = "Nothing yet." },
+			{ title = "# Tasks", content = "Nothing yet." },
+			{ title = "## Todo", content = "Nothing yet." },
+			{ title = "# Notes", content = "Nothing yet." },
+		},
+	},
 	daily = {
 		sections = {
-			{ title = "Today's Focus", content = "" },
-			{ title = "Notes", content = "" },
-			{ title = "Tomorrow's Prep", content = "" },
+			{ title = "# Today's Focus", content = "" },
+			{ title = "# Notes", content = "" },
+			{ title = "# Tomorrow's Prep", content = "" },
 		},
 	},
 	quick = {
@@ -136,7 +144,7 @@ function M.render_array_template(sections_array, context)
 
 	-- Add sections
 	for _, section in ipairs(sections_array) do
-		table.insert(lines, "## " .. section)
+		table.insert(lines, section)
 		table.insert(lines, "")
 	end
 
@@ -180,7 +188,7 @@ function M.render_object_template(template_obj, context)
 
 			-- Add section title
 			if section.title then
-				table.insert(lines, "## " .. section.title)
+				table.insert(lines, section.title)
 			end
 
 			-- Add section content
